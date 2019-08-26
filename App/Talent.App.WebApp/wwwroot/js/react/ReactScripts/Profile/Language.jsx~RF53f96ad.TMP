@@ -1,0 +1,309 @@
+﻿/* Language section */
+import React from 'react';
+import Cookies from 'js-cookie';
+import { ChildSingleInput } from '../Form/SingleInput.jsx';
+import { Table, Form, Input, Select, Button, Icon, Dropdown } from 'semantic-ui-react';
+import DeleteLanguage from './DeleteLanguage.jsx';
+import UpdateLanguage from './UpdateLanguage.jsx';
+
+export default class Language extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const languageData = props.languageData ?
+            Object.assign({}, props.languageData)
+            : {
+                name: "",
+                level: ""
+            }
+
+        this.state = {
+            showEditSection: false,
+            currentlyEditing: false,
+            langname: "",
+            langlevel: "",
+            languages: [],
+            newlanguageData: languageData,
+            val: "",
+            data: {
+                name: "",
+                level: ""
+            },
+            updateData: {
+                id: " ",
+                name: "",
+                level: ""
+            },
+            name: "",
+            level:""
+        }
+
+        this.openEdit = this.openEdit.bind(this)
+        this.closeEdit = this.closeEdit.bind(this)
+        this.addLanguage = this.addLanguage.bind(this)
+        this.check = this.check.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+    }
+
+    openEdit() {
+        //const languageData = Object.assign({}, this.props.languageData)
+        this.setState({
+            showEditSection: true,
+            updateData: { id: null }
+        })
+    }
+
+    closeEdit() {
+        this.setState({
+            showEditSection: false
+        })
+        console.log("Close Edit:" + this.state.currentlyEditing);
+    }
+
+    addLanguage() {
+
+        let a = {
+            name: this.state.data.name,
+            level: this.state.data.level,
+        }
+        //console.log("Add language values are:" + this.state.data.name + "-" + this.state.data.level);
+        //debugger
+        this.setState({
+            languages: this.state.data
+        }, () => console.log(this.state.languages);
+        debugger
+        //this.props.updateProfileData({ languages: this.state.languages })
+    }
+
+    updateLanguage() {
+
+        let a = {
+            langname: this.state.langname,
+            langlevel: this.state.langlevel
+        }
+
+        this.setState({
+            Languages: [...this.state.Languages, a]
+        });
+
+        console.log("values are: " + a.langname + "  level: " + a.langlevel);
+    }
+
+    check(index, langvalue, llevelvalue) {
+        console.log("Check clicked:" + this.state.currentlyEditing + "-" + index + "-" + langvalue + "-" + llevelvalue);
+        this.setState({
+            currentlyEditing: true,
+            val: index,
+            langname: langvalue,
+            langlevel: llevelvalue
+        })
+
+        this.state = {
+            val: index
+        }
+        console.log("Check clicked after:" + this.state.currentlyEditing + "-" + this.state.val + "-" + this.state.langname + "-" + this.state.langvalue);
+    }
+
+    cancel() {
+        this.setState({
+            currentlyEditing: false,
+        })
+        console.log("Cancel clicked after:" + this.state.currentlyEditing);
+    }
+
+    handleChange() {
+
+        if (this.state.updateData.id != null) {
+            const updateData = Object.assign({}, this.state.updateData);
+            updateData[event.target.name] = event.target.value;
+            this.setState({ updateData }, () => console.log(this.state.updateData))
+        }
+        else {
+            const data = Object.assign({}, this.state.data);
+            data[event.target.name] = event.target.value;
+            this.setState({ data}, () => console.log(this.state.data))
+        }
+
+
+    }
+
+    render() {
+        return (
+            this.state.showEditSection ? this.renderEdit() : this.renderDisplay()
+        )
+    }
+
+    renderEdit() {
+        const languageLevel = [
+            "Basic",
+            "Conversational",
+            "Fluent",
+            "Native/Bilingual",
+        ]
+
+        const languageOptions = languageLevel.map(lang => ({
+            key: lang,
+            text: lang,
+            value: lang,
+
+        }));
+
+        return (
+
+            <div className='ui sixteen wide column'>
+                <React.Fragment>
+
+                    <Form>
+                        <Form.Group widths='equal'>
+                            <Form.Field control={Input}
+                                placeholder='Add Language'
+                                name="name"
+                                onChange={this.handleChange} 
+                            />
+
+                            <Form.Field>
+                                <select className="ui right labeled dropdown"
+                                    placeholder="Language Level"
+                                    onChange={this.handleChange}
+                                    name="level"
+                                >
+                                    <option value="">Language Level</option>
+                                    <option value="Basic">Basic</option>
+                                    <option value="Conversational">Conversational Level</option>
+                                    <option value="Fluent">Fluent</option>
+                                    <option value="Native/Bilingual">Native/Bilingual</option>
+                                </select>
+                            </Form.Field>
+                                
+                            <button type="button" className="ui teal button" onClick={this.addLanguage}>Add</button>
+                            <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
+                        </Form.Group>
+
+                    </Form>
+                    <br />
+                </React.Fragment>
+
+                <React.Fragment>
+                    {this.renderDisplay()}
+                </React.Fragment>
+            </div>
+        )
+    }
+
+    renderDisplay() {
+        console.log("Called Display");
+        //console.log("Editing status:" + this.state.currentlyEditing + "-" + this.state.val + "-" + this.state.langname + "-" + this.state.langlevel);
+
+        //const langdata = this.state.langname;
+        //const lleveldata = this.state.langlevel;
+
+        debugger
+        const Language = this.state.languages;
+
+        const languageLevel = [
+            "Basic",
+            "Conversational",
+            "Fluent",
+            "Native/Bilingual",
+        ]
+
+        const languageOptions = languageLevel.map(lang => ({
+            key: lang,
+            text: lang,
+            value: lang,
+
+        }));
+
+        return (
+            <div className='row'>
+                <div className="ui sixteen wide column">
+                    <React.Fragment>
+                        <Table fixed>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Language</Table.HeaderCell>
+                                    <Table.HeaderCell>Level</Table.HeaderCell>
+                                    <Table.HeaderCell>
+                                        <button type="button" className="ui floated teal button" onClick={this.openEdit}>+ Add New</button>
+                                    </Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {Language.map((name, index) => (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>
+                                            {this.state.currentlyEditing && this.state.val === index ? (
+
+                                                <Table.Cell>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={langdata}
+                                                        onChange={e => this.setState({ name: e.target.value })}
+                                                    />
+                                                </Table.Cell>
+                                            )
+                                                :
+                                                (
+                                                    <Table.Cell>{name.name}</Table.Cell>
+                                                )
+                                            }
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {this.state.currentlyEditing && this.state.val === index ? (
+                                                <div>
+                                                    <Table.Cell>
+                                                        <Form>
+                                                            <Form.Select
+                                                                fluid
+                                                                search
+                                                                selection
+                                                                value={lleveldata}
+                                                                name={level}
+                                                                options={languageOptions}
+                                                                placeholder="Language Level"
+                                                                onChange={(e, { value }) => {
+                                                                    this.setState({ level: value })
+                                                                }}
+                                                            />
+                                                        </Form>
+                                                    </Table.Cell>
+
+                                                </div>
+
+                                            )
+                                                : (
+                                                    <Table.Cell>{name.level}</Table.Cell>
+                                                )
+                                            }
+                                        </Table.Cell>
+                                        <Table.Cell textAlign='right'>
+                                            {this.state.currentlyEditing && this.state.val === index ? (
+                                                <Table.Cell>
+                                                    <button type="button" className="ui teal button" onClick={this.updateLanguage.bind(this)}>Update</button>
+                                                    <button type="button" className="ui button" onClick={this.cancel.bind(this)}>Cancel</button>
+                                                </Table.Cell>
+                                            )
+                                                : (
+                                                    <Table.Cell>
+                                                        <Table.Cell>
+                                                            <Icon link name='pencil' onClick={this.check.bind(this, index, name.name, name.level)} />
+                                                        </Table.Cell>
+                                                        <Table.Cell>
+                                                            <DeleteLanguage deletelanguage={name} loadLanguage={this.renderDisplay} />
+                                                        </Table.Cell>
+                                                    </Table.Cell>
+
+                                                )}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+
+                        </Table>
+                    </React.Fragment>
+                </div>
+            </div>
+        )
+    }
+}
